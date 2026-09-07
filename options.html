@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Ed Oracle — Settings</title>
+  <style>
+    :root {
+      --bg: #14121f; --panel: #1d1a2e; --panel2: #262239; --border: #383252;
+      --text: #e8e6f2; --muted: #9a94b8; --accent: #7c6cff; --accent2: #9f8bff;
+      --green: #4cd97b; --red: #ff6b6b; --gold: #ffb81c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+      max-width: 640px; margin: 0 auto; padding: 28px 20px 60px;
+    }
+    h1 { font-size: 20px; display: flex; align-items: center; gap: 10px; }
+    h1 img { width: 28px; height: 28px; border-radius: 7px; }
+    h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent2); margin: 28px 0 10px; }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin: 12px 0 4px; }
+    label:first-child { margin-top: 0; }
+    input {
+      width: 100%; background: var(--panel2); border: 1px solid var(--border); color: var(--text);
+      border-radius: 8px; padding: 8px 10px; font: inherit;
+    }
+    input:focus { outline: none; border-color: var(--accent); }
+    .hint { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+    .hint code { background: var(--panel2); padding: 1px 5px; border-radius: 4px; }
+    .row { display: flex; gap: 10px; align-items: flex-end; }
+    .row > div { flex: 1; }
+    button {
+      margin-top: 16px; padding: 9px 16px; border: none; border-radius: 8px;
+      font-weight: 700; cursor: pointer; font-size: 13px;
+      background: var(--accent); color: #fff;
+    }
+    button:hover { background: var(--accent2); }
+    button.ghost { background: none; border: 1px solid var(--border); color: var(--text); }
+    button.ghost:hover { border-color: var(--accent); background: none; }
+    button.danger { background: none; border: 1px solid #5a2525; color: var(--red); }
+    button.danger:hover { background: #2b1515; }
+    #save-status { margin-left: 12px; font-size: 12px; color: var(--green); }
+    .token-status { font-size: 12px; margin-top: 6px; }
+    .ok { color: var(--green); } .warn { color: var(--gold); } .bad { color: var(--red); }
+    .note {
+      background: #1c2a4a; border: 1px solid #2c3f66; border-radius: 8px;
+      padding: 10px 12px; font-size: 12.5px; color: #b9cdf5; margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1><img src="icons/icon48.png" alt="" /> Ed Oracle — Settings</h1>
+
+  <h2>LLM endpoint (OpenAI-compatible)</h2>
+  <div class="card">
+    <div class="note">
+      Works with any OpenAI-compatible chat completions API (OpenAI, DeepInfra, OpenRouter,
+      Groq, LM Studio, Ollama with <code>/v1</code>, ...). The endpoint is requested browser
+      permission when you save.
+    </div>
+    <label for="llmBaseUrl">Base URL</label>
+    <input id="llmBaseUrl" type="text" placeholder="https://api.openai.com/v1" />
+    <div class="hint">No trailing <code>/chat/completions</code> — just the base, e.g. <code>https://api.deepinfra.com/v1/openai</code></div>
+
+    <label for="llmApiKey">API key</label>
+    <input id="llmApiKey" type="password" placeholder="sk-..." />
+
+    <label for="llmModel">Model</label>
+    <input id="llmModel" type="text" placeholder="gpt-4o-mini" />
+  </div>
+
+  <h2>Ed Discussion</h2>
+  <div class="card">
+    <div class="note">
+      The Ed token is grabbed <b>automatically</b>: just open
+      <a href="https://edstem.org" target="_blank">edstem.org</a> while logged in — the extension
+      reads the session JWT from the page. No manual copy needed. A manual token below acts as
+      an override.
+    </div>
+    <div class="token-status" id="tokenStatus"></div>
+
+    <label for="edToken">Ed token (manual override, optional)</label>
+    <input id="edToken" type="password" placeholder="leave empty to use the auto-grabbed token" />
+
+    <div class="row">
+      <div>
+        <label for="edBaseUrl">Ed API base URL</label>
+        <input id="edBaseUrl" type="text" />
+      </div>
+      <div>
+        <label for="courseId">Course ID</label>
+        <input id="courseId" type="number" />
+      </div>
+    </div>
+    <div class="hint">Course ID is the number in <code>edstem.org/us/courses/&lt;ID&gt;/discussion</code>.</div>
+  </div>
+
+  <h2>Course &amp; sync</h2>
+  <div class="card">
+    <label for="courseName">Course name (used in the oracle's persona)</label>
+    <input id="courseName" type="text" />
+
+    <label for="syncIntervalMin">Background sync interval (minutes, min 5)</label>
+    <input id="syncIntervalMin" type="number" min="5" />
+
+    <div style="display:flex; gap:10px;">
+      <button id="syncNow" class="ghost">Sync now</button>
+      <button id="refreshToken" class="ghost">Refresh Ed token</button>
+      <button id="clearCache" class="danger">Clear cache</button>
+    </div>
+    <div class="hint" id="syncStatus"></div>
+  </div>
+
+  <button id="save">Save settings</button>
+  <span id="saveMsg"></span>
+
+  <script src="options.js"></script>
+</body>
+</html>
